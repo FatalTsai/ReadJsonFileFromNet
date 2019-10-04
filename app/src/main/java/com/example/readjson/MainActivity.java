@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.JsonReader;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
@@ -25,6 +26,8 @@ import java.net.URL;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,8 +38,9 @@ public class MainActivity extends AppCompatActivity {
 
     TextView txv;
     JSONObject jsonObject;
-    String data;
-
+    String data="fuck";
+    JSONArray jsonArray;
+    ArrayList<String> list;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,21 +48,36 @@ public class MainActivity extends AppCompatActivity {
 
         //Log.e("data",isCleartextTrafficPermitted());
         txv = (TextView) findViewById(R.id.txv);
-
-        new GoodTask().execute("http://192.168.151.10:3000/home/=getvideo");
-
-
-        //loadJSONFromNet();
-        //txv.setText(loadJSONFromAsset(getApplicationContext()));
-        //txv.setText(fetchJSON());
-            /*
+        //http://enginebai.logdown.com/posts/196784/android-asnyctask-get-results-oo-methods
+        //a better way to deal with async task
         try {
-            jsonObject = new JSONObject(loadJSONFromAsset(getApplicationContext()));
-        }catch (JSONException e){
+            data = new GoodTask().execute("http://192.168.151.10:3000/home/=getvideo").get();
+        } catch (ExecutionException e) {
             e.printStackTrace();
-
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        */
+
+        try {
+            Log.d("data2",data);
+            jsonArray = new JSONArray(data);
+
+            //REF:https://stackoverflow.com/questions/3395729/convert-json-array-to-normal-java-list
+            //method: JSONArray to ArrayList
+            list = new ArrayList<String>();
+
+            if (jsonArray != null) {
+                int len = jsonArray.length();
+                for (int i=0;i<len;i++){
+                    list.add(jsonArray.get(i).toString());
+                }
+            }
+
+            Log.d("item", list.get(3));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
 
     }
 
@@ -66,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-//Ref :http://codenamker.pixnet.net/blog/post/161818334-%E3%80%90android%E3%80%91%E7%95%B0%E6%AD%A5%E5%9F%B7%E8%A1%8C%E7%B7%92asynctask-android-studio
+    //Ref :http://codenamker.pixnet.net/blog/post/161818334-%E3%80%90android%E3%80%91%E7%95%B0%E6%AD%A5%E5%9F%B7%E8%A1%8C%E7%B7%92asynctask-android-studio
     class GoodTask extends AsyncTask<String, Integer, String> {
         // <傳入參數, 處理中更新介面參數, 處理後傳出參數>
         private static final int TIME_OUT = 1000;
@@ -123,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+
 
 
 }

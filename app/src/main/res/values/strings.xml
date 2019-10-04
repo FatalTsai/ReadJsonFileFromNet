@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">readjson</string>
+    <string name="title_activity_viewphoto">viewphoto</string>
 </resources>
